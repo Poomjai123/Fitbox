@@ -99,12 +99,8 @@
         boxDimensions = [24, 30, 16]; // Box B dimensions in cm
       }
 
-      // Calculate volume
-      const boxVolume = boxDimensions[0] * boxDimensions[1] * boxDimensions[2];
-      const itemVolume = itemSize[0] * itemSize[1] * itemSize[2];
-
       // Calculate the number of items that can fit in one box
-      const itemsPerBox = Math.floor(boxVolume / itemVolume);
+      const itemsPerBox = calculateItemsPerBox(boxDimensions, itemSize);
 
       // Calculate the total number of boxes needed for the specified item count
       const totalBoxes = Math.ceil(itemCount / itemsPerBox);
@@ -116,13 +112,22 @@
       document.getElementById('result').innerHTML = `
         <p>สามารถใส่สินค้าได้ ${itemsPerBox} ชิ้นต่อกล่อง. ต้องการกล่องทั้งหมด ${totalBoxes} ใบ สำหรับจำนวนสินค้า ${itemCount} ชิ้น.</p>
         <p>น้ำหนักรวมสินค้า: ${totalWeight} กรัม.</p>
+        <p>คำแนะนำ: ควรจัดเรียงสินค้าให้แน่นหนา และเว้นระยะห่างหากมีสินค้าที่เปราะบาง.</p>
       `;
     });
 
+    // Function to calculate items per box
+    const calculateItemsPerBox = (boxDimensions, itemSize) => {
+      const fitX = Math.floor(boxDimensions[0] / itemSize[0]);
+      const fitY = Math.floor(boxDimensions[1] / itemSize[1]);
+      const fitZ = Math.floor(boxDimensions[2] / itemSize[2]);
+      return fitX * fitY * fitZ;
+    };
+
     // Reset button functionality
     document.getElementById('reset-button').addEventListener('click', function() {
-      document.getElementById('calculator-form').reset(); // รีเซ็ตฟอร์ม
-      document.getElementById('result').innerHTML = ''; // เคลียร์ผลลัพธ์
+      document.getElementById('calculator-form').reset(); // Reset form
+      document.getElementById('result').innerHTML = ''; // Clear result
     });
   </script>
 
