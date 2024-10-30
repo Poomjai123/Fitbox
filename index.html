@@ -16,6 +16,20 @@
       background-color: #3b82f6; /* Blue 500 */
       color: #fff;
     }
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-15px);
+      }
+      60% {
+        transform: translateY(-10px);
+      }
+    }
+    .animate-bounce {
+      animation: bounce 1s;
+    }
   </style>
 </head>
 <link rel="icon" href="image/Logo.webp" type="image/x-icon">
@@ -73,6 +87,15 @@
     </div>
   </section>
 
+  <!-- User Count Section -->
+  <section class="py-6 bg-gray-50 text-center">
+    <div class="container mx-auto">
+      <h3 class="text-2xl font-semibold text-gray-700 mb-2">จำนวนผู้ใช้งานในเว็บไซต์</h3>
+      <div id="user-count" class="text-3xl font-bold text-blue-600 animate-bounce">กำลังนับจำนวนผู้ใช้งาน...</div>
+      <div class="mt-2 text-gray-500">เรายินดีต้อนรับผู้ใช้ทุกท่าน! ขอบคุณที่มาใช้บริการเรา</div>
+    </div>
+  </section>
+
   <!-- Footer -->
   <footer class="bg-main text-white py-8">
     <div class="container mx-auto text-center">
@@ -81,63 +104,83 @@
   </footer>
 
   <script>
-    document.getElementById('calculator-form').addEventListener('submit', function(e) {
-      e.preventDefault();
+    // Function to update user count
+    function updateUserCount() {
+      let userCount = localStorage.getItem('userCount') || 0;
+      userCount++;
+      localStorage.setItem('userCount', userCount);
       
-      // Get item size, count, net weight, and box size
-      const itemSize = document.getElementById('itemSize').value.split(',').map(Number);
-      const itemCount = parseInt(document.getElementById('itemCount').value);
-      const netWeight = parseInt(document.getElementById('netWeight').value);
-      const boxSelection = document.getElementById('boxSize').value;
+      // Animate the user count display
+      const userCountElement = document.getElementById('user-count');
+      userCountElement.classList.remove('animate-bounce'); // Remove previous animation
+      void userCountElement.offsetWidth; // Trigger reflow to restart the animation
+      userCountElement.classList.add('animate-bounce'); // Add bounce animation
+      userCountElement.innerText = `จำนวนผู้ใช้งาน: ${userCount} คน`;
+    }
 
-      let boxDimensions;
+    // Call the function on page load
+    window.onload = function() {
+      updateUserCount();
 
-      // Define box dimensions based on selection
-      if (boxSelection === "A") {
-        boxDimensions = [30, 45, 22]; // Box A dimensions in cm
-      } else if (boxSelection === "B") {
-        boxDimensions = [24, 30, 16]; // Box B dimensions in cm
-      }
+      // Form submission handling
+      document.getElementById('calculator-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Get item size, count, net weight, and box size
+        const itemSize = document.getElementById('itemSize').value.split(',').map(Number);
+        const itemCount = parseInt(document.getElementById('itemCount').value);
+        const netWeight = parseInt(document.getElementById('netWeight').value);
+        const boxSelection = document.getElementById('boxSize').value;
 
-      // Check if the item can fit in the box
-      const canFit = itemSize[0] <= boxDimensions[0] && itemSize[1] <= boxDimensions[1] && itemSize[2] <= boxDimensions[2];
+        let boxDimensions;
 
-      if (!canFit) {
-        // Display error message if the item is too large
-        document.getElementById('result').innerHTML = `<p class="text-red-500">ไม่สามารถใส่สินค้าได้ เนื่องจากขนาดสินค้าเกินกว่าขนาดกล่อง.</p>`;
-        return;
-      }
+        // Define box dimensions based on selection
+        if (boxSelection === "A") {
+          boxDimensions = [30, 45, 22]; // Box A dimensions in cm
+        } else if (boxSelection === "B") {
+          boxDimensions = [24, 30, 16]; // Box B dimensions in cm
+        }
 
-      // Calculate the number of items that can fit in one box
-      const itemsPerBox = calculateItemsPerBox(boxDimensions, itemSize);
+        // Check if the item can fit in the box
+        const canFit = itemSize[0] <= boxDimensions[0] && itemSize[1] <= boxDimensions[1] && itemSize[2] <= boxDimensions[2];
 
-      // Calculate the total number of boxes needed for the specified item count
-      const totalBoxes = Math.ceil(itemCount / itemsPerBox);
+        if (!canFit) {
+          // Display error message if the item is too large
+          document.getElementById('result').innerHTML = `<p class="text-red-500">ไม่สามารถใส่สินค้าได้ เนื่องจากขนาดสินค้าเกินกว่าขนาดกล่อง.</p>`;
+          return;
+        }
 
-      // Calculate total weight
-      const totalWeight = netWeight * itemCount;
+        // Calculate the number of items that can fit in one box
+        const itemsPerBox = calculateItemsPerBox(boxDimensions, itemSize);
 
-      // Display result
-      document.getElementById('result').innerHTML = `
-        <p>สามารถใส่สินค้าได้ ${itemsPerBox} ชิ้นต่อกล่อง. ต้องการกล่องทั้งหมด ${totalBoxes} ใบ สำหรับจำนวนสินค้า ${itemCount} ชิ้น.</p>
-        <p>น้ำหนักรวมสินค้า: ${totalWeight} กรัม.</p>
-        <p>คำแนะนำ: ควรจัดเรียงสินค้าให้แน่นหนา และเว้นระยะห่างหากมีสินค้าที่เปราะบาง.</p>
-      `;
-    });
+        // Calculate the total number of boxes needed for the specified item count
+        const totalBoxes = Math.ceil(itemCount / itemsPerBox);
 
-    // Function to calculate items per box
-    const calculateItemsPerBox = (boxDimensions, itemSize) => {
-      const fitX = Math.floor(boxDimensions[0] / itemSize[0]);
-      const fitY = Math.floor(boxDimensions[1] / itemSize[1]);
-      const fitZ = Math.floor(boxDimensions[2] / itemSize[2]);
-      return fitX * fitY * fitZ;
+        // Calculate total weight
+        const totalWeight = netWeight * itemCount;
+
+        // Display result
+        document.getElementById('result').innerHTML = `
+          <p>สามารถใส่สินค้าได้ ${itemsPerBox} ชิ้นต่อกล่อง. ต้องการกล่องทั้งหมด ${totalBoxes} ใบ สำหรับจำนวนสินค้า ${itemCount} ชิ้น.</p>
+          <p>น้ำหนักรวมสินค้า: ${totalWeight} กรัม.</p>
+          <p>คำแนะนำ: ควรจัดเรียงสินค้าให้แน่นหนา และเว้นระยะห่างหากมีสินค้าที่เปราะบาง.</p>
+        `;
+      });
+
+      // Function to calculate items per box
+      const calculateItemsPerBox = (boxDimensions, itemSize) => {
+        const fitX = Math.floor(boxDimensions[0] / itemSize[0]);
+        const fitY = Math.floor(boxDimensions[1] / itemSize[1]);
+        const fitZ = Math.floor(boxDimensions[2] / itemSize[2]);
+        return fitX * fitY * fitZ;
+      };
+
+      // Reset button functionality
+      document.getElementById('reset-button').addEventListener('click', function() {
+        document.getElementById('calculator-form').reset(); // Reset form
+        document.getElementById('result').innerHTML = ''; // Clear result
+      });
     };
-
-    // Reset button functionality
-    document.getElementById('reset-button').addEventListener('click', function() {
-      document.getElementById('calculator-form').reset(); // Reset form
-      document.getElementById('result').innerHTML = ''; // Clear result
-    });
   </script>
 
 </body>
