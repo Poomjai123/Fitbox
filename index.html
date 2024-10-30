@@ -65,6 +65,7 @@
           </select>
         </div>
         <button type="submit" class="btn-main w-full py-3 rounded-md font-semibold shadow-lg hover:bg-blue-700">คำนวณจำนวนกล่อง</button>
+        <button type="button" id="reset-button" class="btn-main w-full py-3 mt-4 rounded-md font-semibold shadow-lg hover:bg-blue-700">รีเซ็ต</button>
       </form>
 
       <div id="result" class="mt-6 text-gray-700"></div>
@@ -116,6 +117,12 @@
         <p>สามารถใส่สินค้าได้ ${itemsPerBox} ชิ้นต่อกล่อง. ต้องการกล่องทั้งหมด ${totalBoxes} ใบ สำหรับจำนวนสินค้า ${itemCount} ชิ้น.</p>
         <p>น้ำหนักรวมสินค้า: ${totalWeight} กรัม.</p>
       `;
+    });
+
+    // Reset button functionality
+    document.getElementById('reset-button').addEventListener('click', function() {
+      document.getElementById('calculator-form').reset(); // รีเซ็ตฟอร์ม
+      document.getElementById('result').innerHTML = ''; // เคลียร์ผลลัพธ์
     });
   </script>
 
