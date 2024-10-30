@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fitbox - Box Capacity Calculator</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+    .bg-main {
+      background-color: #1e3a8a; /* Indigo 900 */
+    }
+    .btn-main {
+      background-color: #3b82f6; /* Blue 500 */
+      color: #fff;
+    }
+  </style>
+</head>
+<link rel="icon" href="image/Logo.webp" type="image/x-icon">
+<body class="bg-gray-100">
+
+  <!-- Navbar -->
+  <nav class="bg-main text-white p-4 shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-2xl font-bold">Fitbox</h1>
+      <div>
+        <a href="#calculator" class="mx-4 hover:text-blue-200">คำนวณขนาดกล่อง</a>
+        <a href="#contact" class="mx-4 hover:text-blue-200">ติดต่อเรา</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="bg-white py-20">
+    <div class="container mx-auto text-center">
+      <h2 class="text-4xl font-bold text-gray-800">คำนวณจำนวนกล่องสำหรับสินค้า</h2>
+      <p class="text-gray-600 mt-4">ใส่ขนาดของสินค้าของคุณและเลือกขนาดกล่องเพื่อคำนวณ</p>
+    </div>
+  </section>
+
+  <!-- Calculator Form -->
+  <section class="py-12 bg-gray-50" id="calculator">
+    <div class="container mx-auto">
+      <h3 class="text-3xl font-semibold text-gray-700 mb-6">คำนวณกล่องที่ต้องการ</h3>
+      <form id="calculator-form" class="bg-white p-8 shadow-md rounded-md">
+        <div class="mb-4">
+          <label class="block text-gray-600 text-sm font-semibold mb-2">ขนาดสินค้า (ยาว x กว้าง x สูง) ซม.</label>
+          <input type="text" id="itemSize" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="เช่น 12, 12, 6" required>
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-600 text-sm font-semibold mb-2">จำนวนสินค้า</label>
+          <input type="number" id="itemCount" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="กรอกจำนวนสินค้า" required>
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-600 text-sm font-semibold mb-2">น้ำหนักสุทธิ (กรัม)</label>
+          <input type="number" id="netWeight" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="กรอกน้ำหนักสุทธิของสินค้า" required>
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-600 text-sm font-semibold mb-2">เลือกขนาดกล่อง</label>
+          <select id="boxSize" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" required>
+            <option value="A">กล่อง A (30 x 45 x 22 cm)</option>
+            <option value="B">กล่อง B (24 x 30 x 16 cm)</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-main w-full py-3 rounded-md font-semibold shadow-lg hover:bg-blue-700">คำนวณจำนวนกล่อง</button>
+      </form>
+
+      <div id="result" class="mt-6 text-gray-700"></div>
+      <p class="text-center text-gray-600 italic mt-4">"Fitbox - เราช่วยคุณหากล่องที่พอดีกับสินค้าของคุณ"</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-main text-white py-8">
+    <div class="container mx-auto text-center">
+      <p>&copy; 2023 Fitbox. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('calculator-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Get item size, count, net weight, and box size
+      const itemSize = document.getElementById('itemSize').value.split(',').map(Number);
+      const itemCount = parseInt(document.getElementById('itemCount').value);
+      const netWeight = parseInt(document.getElementById('netWeight').value);
+      const boxSelection = document.getElementById('boxSize').value;
+
+      let boxDimensions;
+
+      // Define box dimensions based on selection
+      if (boxSelection === "A") {
+        boxDimensions = [30, 45, 22]; // Box A dimensions in cm
+      } else if (boxSelection === "B") {
+        boxDimensions = [24, 30, 16]; // Box B dimensions in cm
+      }
+
+      // Calculate volume
+      const boxVolume = boxDimensions[0] * boxDimensions[1] * boxDimensions[2];
+      const itemVolume = itemSize[0] * itemSize[1] * itemSize[2];
+
+      // Calculate the number of items that can fit in one box
+      const itemsPerBox = Math.floor(boxVolume / itemVolume);
+
+      // Calculate the total number of boxes needed for the specified item count
+      const totalBoxes = Math.ceil(itemCount / itemsPerBox);
+
+      // Calculate total weight
+      const totalWeight = netWeight * itemCount;
+
+      // Display result
+      document.getElementById('result').innerHTML = `
+        <p>สามารถใส่สินค้าได้ ${itemsPerBox} ชิ้นต่อกล่อง. ต้องการกล่องทั้งหมด ${totalBoxes} ใบ สำหรับจำนวนสินค้า ${itemCount} ชิ้น.</p>
+        <p>น้ำหนักรวมสินค้า: ${totalWeight} กรัม.</p>
+      `;
+    });
+  </script>
+
+</body>
+</html>
