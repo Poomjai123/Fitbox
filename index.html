@@ -99,6 +99,15 @@
         boxDimensions = [24, 30, 16]; // Box B dimensions in cm
       }
 
+      // Check if the item can fit in the box
+      const canFit = itemSize[0] <= boxDimensions[0] && itemSize[1] <= boxDimensions[1] && itemSize[2] <= boxDimensions[2];
+
+      if (!canFit) {
+        // Display error message if the item is too large
+        document.getElementById('result').innerHTML = `<p class="text-red-500">ไม่สามารถใส่สินค้าได้ เนื่องจากขนาดสินค้าเกินกว่าขนาดกล่อง.</p>`;
+        return;
+      }
+
       // Calculate the number of items that can fit in one box
       const itemsPerBox = calculateItemsPerBox(boxDimensions, itemSize);
 
